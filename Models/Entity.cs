@@ -8,5 +8,6 @@ namespace OnlineShop.Models
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime? DeletedDate { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
     }
 }

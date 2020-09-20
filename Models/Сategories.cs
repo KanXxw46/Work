@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OnlineShop
+namespace OnlineShop.Models
 {
     public class Сategories : Entity
     {

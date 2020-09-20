@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OnlineShop.Models;
 using System.Data.SqlClient;
+using System.Data.Common;
 
 namespace OnlineShop.Data
 {
@@ -9,13 +10,18 @@ namespace OnlineShop.Data
     {
         public void Create(User user)
         {
-            SqlConnection connection = new SqlConnection();
+            DbProviderFactories.RegisterFactory("mssql",SqlClientFactory.Instance);
+            DbProviderFactory factory = DbProviderFactories.GetFactory("mssql");
+
+            DbConnection connection = factory.CreateConnection();
             connection.ConnectionString = "Server = (localdb)\\MSSQLLocalDB;Database = OnlineShopDatabase;Trusted_Connection = True";
             connection.Open();
 
-            SqlTransaction transaction = connection.BeginTransaction();
+            DbTransaction transaction = connection.BeginTransaction();
 
-            SqlCommand command = new SqlCommand($"insert into Users(Id,Email,Password) values (@Id,@Email,@Password);", connection);
+            DbCommand command = factory.CreateCommand();
+            command.CommandText = $"insert into Users(Id,Email,Password) values (@Id,@Email,@Password);";
+            command.Connection = connection;
 
             SqlParameter idParameter = new SqlParameter();
             idParameter.ParameterName = "Id";
@@ -50,6 +56,11 @@ namespace OnlineShop.Data
             command.Dispose();
             transaction.Dispose();
             connection.Close();
+        }
+
+        internal void Create(object user)
+        {
+            throw new NotImplementedException();
         }
 
         public void ExecuteInTransaction(SqlConnection connection,params SqlCommand[]sqlCommands)
@@ -100,12 +111,10 @@ namespace OnlineShop.Data
             return gotUser;
         }
 
-        public List<User> GetAll()
-        {
-            
-
-
-        }
+        //public List<User> GetAll()
+        //{
+           //TODO 
+        //}
         public void Update(User user)
         {
             SqlConnection connection = new SqlConnection();
